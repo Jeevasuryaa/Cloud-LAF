@@ -1,13 +1,49 @@
 let votes = {};
 let currentUser = "";
+let historyStack = [];
 
 /* PAGE SWITCH (FIXED) */
-function showSection(id) {
+function showSection(id, isBack = false) {
+    let currentActive = document.querySelector(".page.active");
+
+    // Keep track of history if not using the back button
+    if (currentActive && !isBack && currentActive.id !== "login" && currentActive.id !== id) {
+        historyStack.push(currentActive.id);
+    }
+
     document.querySelectorAll(".page").forEach(p => {
         p.classList.remove("active");
     });
 
     document.getElementById(id).classList.add("active");
+
+    // Manage sidebar visibility based on login state
+    let sidebar = document.getElementById("sidebar");
+    let mainContent = document.getElementById("main-content");
+    if (id === "login") {
+        sidebar.classList.add("hidden");
+        mainContent.classList.remove("shifted");
+    } else if (currentUser !== "") {
+        sidebar.classList.remove("hidden");
+        mainContent.classList.add("shifted");
+    }
+
+    // Manage back button visibility
+    let backBtn = document.getElementById("back-btn");
+    if (backBtn) {
+        if (id === "login" || historyStack.length === 0) {
+            backBtn.classList.add("hidden");
+        } else {
+            backBtn.classList.remove("hidden");
+        }
+    }
+}
+
+function goBack() {
+    if (historyStack.length > 0) {
+        let prev = historyStack.pop();
+        showSection(prev, true);
+    }
 }
 
 /* LOGIN */
@@ -19,10 +55,43 @@ function login() {
     currentUser = username.value;
 
     let initials = currentUser.split(" ").map(w => w[0]).join("").toUpperCase();
-    avatar.innerText = initials;
-    avatar.classList.remove("hidden");
+
+    let sidebarAvatar = document.getElementById("sidebar-avatar");
+    sidebarAvatar.innerText = initials;
+    document.getElementById("sidebar-username").innerText = currentUser;
+
+    document.getElementById("sidebar").classList.remove("hidden");
+    document.getElementById("main-content").classList.add("shifted");
+
+    historyStack = []; // Reset history stack on login
 
     showSection("community");
+}
+
+function changeProfilePic() {
+    let file = document.getElementById("profilePicInput").files[0];
+    if (!file) return;
+
+    let url = URL.createObjectURL(file);
+    let avatar = document.getElementById("sidebar-avatar");
+    avatar.style.backgroundImage = `url(${url})`;
+    avatar.innerText = ""; // Hide initials if image is set
+}
+
+function maximizeProfilePic() {
+    let avatar = document.getElementById("sidebar-avatar");
+    let bgImage = avatar.style.backgroundImage;
+    
+    // Don't maximize if they haven't uploaded an image yet
+    if (!bgImage || bgImage === 'none') return;
+    
+    let url = bgImage.slice(4, -1).replace(/"/g, "");
+    document.getElementById("fullImage").src = url;
+    document.getElementById("imageModal").classList.add("active");
+}
+
+function closeModal() {
+    document.getElementById("imageModal").classList.remove("active");
 }
 
 /* COMMUNITY */
@@ -104,7 +173,16 @@ function toggleMenu(id) {
 }
 
 function savePost(id) {
-    alert("Post saved successfully!");
+    let post = document.getElementById(`post-${id}`);
+    if (post) {
+        let clone = post.cloneNode(true);
+        clone.id = `saved-post-${id}`; // avoid ID conflicts
+        let menu = clone.querySelector(".dropdown-container");
+        if (menu) menu.remove(); // Remove dropdown for saved items
+
+        document.getElementById("savedItems").appendChild(clone);
+        alert("Post saved to your profile!");
+    }
     toggleMenu(id);
 }
 
@@ -173,7 +251,16 @@ function addItem() {
 }
 
 function saveItem(id) {
-    alert("Item saved successfully!");
+    let item = document.getElementById(`item-${id}`);
+    if (item) {
+        let clone = item.cloneNode(true);
+        clone.id = `saved-item-${id}`; // avoid ID conflicts
+        let menu = clone.querySelector(".dropdown-container");
+        if (menu) menu.remove(); // Remove dropdown for saved items
+
+        document.getElementById("savedItems").appendChild(clone);
+        alert("Item saved to your profile!");
+    }
     toggleMenu(id);
 }
 

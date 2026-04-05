@@ -9,54 +9,80 @@
 
 <body>
 
-    <header>
-        <div class="logo">CampusConnect</div>
-
-        <div class="nav-right">
-            <button onclick="showSection('community')">Community</button>
-            <button onclick="showSection('lostfound')">Lost & Found</button>
-            <div id="avatar" class="avatar hidden"></div>
+    <!-- SIDEBAR -->
+    <div id="sidebar" class="sidebar hidden">
+        <div class="sidebar-profile">
+            <div class="avatar-wrapper">
+                <div id="sidebar-avatar" class="avatar large" onclick="maximizeProfilePic()"></div>
+                <label for="profilePicInput" class="edit-badge">📷</label>
+            </div>
+            <input type="file" id="profilePicInput" accept="image/*" class="hidden" onchange="changeProfilePic()">
+            <h3 id="sidebar-username"></h3>
         </div>
-    </header>
-
-    <!-- LOGIN PAGE -->
-    <section id="login" class="page active center">
-        <div class="card login-card">
-            <h2>Login</h2>
-            <input id="username" placeholder="Username">
-            <input id="password" type="password" placeholder="Password">
-            <button onclick="login()">Login</button>
+        <div class="sidebar-nav">
+            <button onclick="showSection('savedPage')">Saved</button>
         </div>
-    </section>
+    </div>
 
-    <!-- COMMUNITY PAGE -->
-    <section id="community" class="page">
-        <h2>Community</h2>
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+        <header>
+            <div class="logo">
+                <button id="back-btn" class="hidden" onclick="goBack()">← Back</button>
+                CampusConnect
+            </div>
 
-        <div class="card">
-            <input id="postText" placeholder="What's happening?">
-            <input type="file" id="postMedia" accept="image/*" onchange="previewMedia()">
-            <div id="preview"></div>
-            <button onclick="addPost()">Post</button>
-        </div>
+            <div class="nav-right">
+                <button onclick="showSection('community')">Community</button>
+                <button onclick="showSection('lostfound')">Lost & Found</button>
+            </div>
+        </header>
 
-        <div id="posts"></div>
-    </section>
+        <!-- LOGIN PAGE -->
+        <section id="login" class="page active center">
+            <div class="card login-card">
+                <h2>Login</h2>
+                <input id="username" placeholder="Username">
+                <input id="password" type="password" placeholder="Password">
+                <button onclick="login()">Login</button>
+            </div>
+        </section>
 
-    <!-- LOST & FOUND PAGE -->
-    <section id="lostfound" class="page">
-        <h2>Lost & Found</h2>
+        <!-- COMMUNITY PAGE -->
+        <section id="community" class="page">
+            <h2>Community</h2>
 
-        <div class="card">
-            <input id="itemTitle" placeholder="Item title">
-            <textarea id="itemDesc"></textarea>
-            <input type="file" id="itemImg" accept="image/*" onchange="previewItem()">
-            <img id="itemPreview" class="hidden">
-            <button onclick="addItem()">Submit</button>
-        </div>
+            <div class="card">
+                <input id="postText" placeholder="What's happening?">
+                <input type="file" id="postMedia" accept="image/*" onchange="previewMedia()">
+                <div id="preview"></div>
+                <button onclick="addPost()">Post</button>
+            </div>
 
-        <div id="items"></div>
-    </section>
+            <div id="posts"></div>
+        </section>
+
+        <!-- LOST & FOUND PAGE -->
+        <section id="lostfound" class="page">
+            <h2>Lost & Found</h2>
+
+            <div class="card">
+                <input id="itemTitle" placeholder="Item title">
+                <textarea id="itemDesc"></textarea>
+                <input type="file" id="itemImg" accept="image/*" onchange="previewItem()">
+                <img id="itemPreview" class="hidden">
+                <button onclick="addItem()">Submit</button>
+            </div>
+
+            <div id="items"></div>
+        </section>
+
+        <!-- SAVED PAGE -->
+        <section id="savedPage" class="page">
+            <h2>Saved Posts & Items</h2>
+            <div id="savedItems"></div>
+        </section>
+    </div>
 
     <script src="app.js"></script>
 
