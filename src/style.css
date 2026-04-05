@@ -1,0 +1,113 @@
+body {
+    background-color: #202123;
+    color: #E0E0E0;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+/* HEADER */
+header {
+    background: #2a2b2f;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* PAGES */
+.page {
+    display: none;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* ACTIVE PAGE ONLY */
+.page.active {
+    display: block;
+}
+
+/* LOGIN CENTER ONLY */
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+/* CARD */
+.card {
+    background: #2a2b2f;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+/* LOGIN CARD FIX */
+.login-card {
+    width: 400px;
+}
+
+/* INPUT */
+input, textarea {
+    background: #333338;
+    color: #E0E0E0;
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 8px;
+    margin: 5px;
+}
+
+/* BUTTON */
+button {
+    background-color: #3B82F6;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+/* AVATAR */
+.avatar {
+    width: 36px;
+    height: 36px;
+    background: #3B82F6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* POSTS */
+.post, .item {
+    background: #2a2b2f;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* COMMENTS */
+.comment {
+    background: #333;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+/* MENU */
+.menu-content {
+    display: none;
+    position: absolute;
+    background: #333;
+    right: 0;
+    border-radius: 6px;
+}
+
+.menu-content div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+/* HIDDEN */
+.hidden {
+    display: none;
+}

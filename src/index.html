@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CampusConnect</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+<div class="logo">CampusConnect</div>
+
+<div class="nav-right">
+<button onclick="showSection('community')">Community</button>
+<button onclick="showSection('lostfound')">Lost & Found</button>
+<div id="avatar" class="avatar hidden"></div>
+</div>
+</header>
+
+<!-- LOGIN PAGE -->
+<section id="login" class="page active center">
+<div class="card login-card">
+<h2>Login</h2>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+</section>
+
+<!-- COMMUNITY PAGE -->
+<section id="community" class="page hidden">
+<h2>Community</h2>
+
+<div class="card">
+<input id="postText" placeholder="What's happening?">
+<input type="file" id="postMedia" onchange="previewMedia()">
+<div id="preview"></div>
+<button onclick="addPost()">Post</button>
+</div>
+
+<div id="posts"></div>
+</section>
+
+<!-- LOST & FOUND PAGE -->
+<section id="lostfound" class="page hidden">
+<h2>Lost & Found</h2>
+
+<div class="card">
+<input id="itemTitle" placeholder="Item title">
+<textarea id="itemDesc"></textarea>
+<input type="file" id="itemImg" onchange="previewItem()">
+<img id="itemPreview" class="hidden">
+<button onclick="addItem()">Submit</button>
+</div>
+
+<div id="items"></div>
+</section>
+
+<script src="app.js"></script>
+
+</body>
+</html>
