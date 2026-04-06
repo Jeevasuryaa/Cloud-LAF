@@ -57,7 +57,7 @@ app.post("/posts", (req, res) => {
     );
 });
 
-/* ================= GET POSTS (WITH VOTES) ================= */
+/* ================= GET POSTS (WITH VOTES + COMMENTS) ================= */
 app.get("/posts", (req, res) => {
     db.all(`
         SELECT 
@@ -70,9 +70,23 @@ app.get("/posts", (req, res) => {
         LEFT JOIN votes ON posts.id = votes.post_id
         GROUP BY posts.id
         ORDER BY posts.id DESC
-    `, [], (err, rows) => {
+    `, [], (err, posts) => {
         if (err) return res.status(500).json({ error: "DB error" });
-        res.json(rows);
+
+        db.all(`
+            SELECT comments.*, users.username
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+        `, [], (err, comments) => {
+            if (err) return res.status(500).json({ error: "DB error" });
+
+            // attach comments to each post
+            posts.forEach(post => {
+                post.comments = comments.filter(c => c.post_id === post.id);
+            });
+
+            res.json(posts);
+        });
     });
 });
 
@@ -86,14 +100,33 @@ app.post("/vote", (req, res) => {
         (err, row) => {
             if (row) {
                 if (row.value === value) {
+                    // toggle off
                     db.run(`DELETE FROM votes WHERE user_id=? AND post_id=?`, [user_id, post_id]);
                 } else {
-                    db.run(`UPDATE votes SET value=? WHERE user_id=? AND post_id=?`, [value, user_id, post_id]);
+                    // switch vote
+                    db.run(`UPDATE votes SET value=? WHERE user_id=? AND post_id=?`,
+                        [value, user_id, post_id]);
                 }
             } else {
+                // new vote
                 db.run(`INSERT INTO votes (user_id, post_id, value) VALUES (?, ?, ?)`,
                     [user_id, post_id, value]);
             }
+
+            res.json({ success: true });
+        }
+    );
+});
+
+/* ================= ADD COMMENT ================= */
+app.post("/comments", (req, res) => {
+    const { user_id, post_id, content } = req.body;
+
+    db.run(
+        `INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)`,
+        [user_id, post_id, content],
+        function (err) {
+            if (err) return res.status(500).json({ error: "DB error" });
 
             res.json({ success: true });
         }

@@ -142,6 +142,18 @@ async function loadPosts() {
 
         votes[id] = 0;
 
+        // 🔥 build comments HTML
+        let commentsHTML = "";
+        if (post.comments && post.comments.length > 0) {
+            post.comments.forEach(c => {
+                commentsHTML += `
+                <div class="comment">
+                    <strong>${c.username}:</strong> ${c.content}
+                </div>
+                `;
+            });
+        }
+
         posts.innerHTML += `
 <div class="post" id="post-${id}">
 <div class="post-header">
@@ -167,7 +179,10 @@ async function loadPosts() {
 </div>
 
 <div class="comments-section">
-<input placeholder="comment" onkeydown="if(event.key==='Enter') addComment(this)">
+${commentsHTML}
+
+<input placeholder="comment" 
+onkeydown="if(event.key==='Enter') addComment(this, ${id})">
 </div>
 </div>
 `;
@@ -226,11 +241,23 @@ function deletePost(id) {
     if (post) post.remove();
 }
 
-function addComment(input) {
+async function addComment(input, postId) {
     if (!input.value) return;
 
-    input.insertAdjacentHTML("afterend",
-        `<div class="comment">${input.value}</div>`);
+    let userId = localStorage.getItem("userId");
+
+    await fetch("http://localhost:5000/comments", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            post_id: postId,
+            content: input.value
+        })
+    });
 
     input.value = "";
+    loadPosts(); // refresh comments
 }
