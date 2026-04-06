@@ -59,7 +59,7 @@ async function login() {
     if (!user || !pass) return alert("Enter credentials");
 
     try {
-        let res = await fetch("http://localhost:5000/login", {
+        let res = await fetch("http://13.53.207.106:5000/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username: user, password: pass })
@@ -112,7 +112,7 @@ async function addPost() {
     let userId = localStorage.getItem("userId");
 
     // ✅ Save to DB
-    await fetch("http://localhost:5000/posts", {
+    await fetch("http://13.53.207.106:5000/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -132,7 +132,7 @@ async function addPost() {
 
 /* 🔥 NEW: load posts but KEEP your UI */
 async function loadPosts() {
-    let res = await fetch("http://localhost:5000/posts");
+    let res = await fetch("http://13.53.207.106:5000/posts");
     let data = await res.json();
 
     posts.innerHTML = "";
@@ -194,7 +194,7 @@ async function vote(id, val) {
     let userId = localStorage.getItem("userId");
 
     // send vote to backend
-    await fetch("http://localhost:5000/vote", {
+    await fetch("http://13.53.207.106:5000/vote", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -246,7 +246,7 @@ async function addComment(input, postId) {
 
     let userId = localStorage.getItem("userId");
 
-    await fetch("http://localhost:5000/comments", {
+    await fetch("http://13.53.207.106:5000/comments", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
