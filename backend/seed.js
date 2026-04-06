@@ -1,17 +1,21 @@
 const db = require("./db");
 const bcrypt = require("bcrypt");
 
-async function createUser() {
-    const hashed = await bcrypt.hash("1234", 10);
+async function createUsers() {
+    const hashed1 = await bcrypt.hash("1234", 10);
+    const hashed2 = await bcrypt.hash("1234", 10);
 
     db.run(
-        `INSERT INTO users (username, password) VALUES (?, ?)`,
-        ["jeeva", hashed],
-        (err) => {
-            if (err) console.log(err);
-            else console.log("User created");
-        }
+        `INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`,
+        ["jeeva", hashed1]
     );
+
+    db.run(
+        `INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`,
+        ["mukesh", hashed2]
+    );
+
+    console.log("Users created (jeeva & mukesh)");
 }
 
-createUser();
+createUsers();

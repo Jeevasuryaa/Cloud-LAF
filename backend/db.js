@@ -22,13 +22,14 @@ CREATE TABLE IF NOT EXISTS posts (
 )
 `);
 
-// VOTES
+// VOTES (🔥 FIXED UNIQUE)
 db.run(`
 CREATE TABLE IF NOT EXISTS votes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     post_id INTEGER,
-    value INTEGER
+    value INTEGER,
+    UNIQUE(user_id, post_id)
 )
 `);
 
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS comments (
 )
 `);
 
-// SAVED POSTS
+// SAVED
 db.run(`
 CREATE TABLE IF NOT EXISTS saved (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
