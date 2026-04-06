@@ -2,11 +2,31 @@ let votes = {};
 let currentUser = "";
 let historyStack = [];
 
-/* PAGE SWITCH (FIXED) */
+/* ================= AUTO LOGIN ================= */
+window.onload = () => {
+    let token = localStorage.getItem("token");
+    let username = localStorage.getItem("username");
+
+    if (token && username) {
+        currentUser = username;
+
+        let initials = username.split(" ").map(w => w[0]).join("").toUpperCase();
+
+        let sidebarAvatar = document.getElementById("sidebar-avatar");
+        sidebarAvatar.innerText = initials;
+        document.getElementById("sidebar-username").innerText = username;
+
+        document.getElementById("sidebar").classList.remove("hidden");
+        document.getElementById("main-content").classList.add("shifted");
+
+        showSection("community");
+    }
+};
+
+/* ================= PAGE SWITCH ================= */
 function showSection(id, isBack = false) {
     let currentActive = document.querySelector(".page.active");
 
-    // Keep track of history if not using the back button
     if (currentActive && !isBack && currentActive.id !== "login" && currentActive.id !== id) {
         historyStack.push(currentActive.id);
     }
@@ -17,9 +37,9 @@ function showSection(id, isBack = false) {
 
     document.getElementById(id).classList.add("active");
 
-    // Manage sidebar visibility based on login state
     let sidebar = document.getElementById("sidebar");
     let mainContent = document.getElementById("main-content");
+
     if (id === "login") {
         sidebar.classList.add("hidden");
         mainContent.classList.remove("shifted");
@@ -28,7 +48,6 @@ function showSection(id, isBack = false) {
         mainContent.classList.add("shifted");
     }
 
-    // Manage back button visibility
     let backBtn = document.getElementById("back-btn");
     if (backBtn) {
         if (id === "login" || historyStack.length === 0) {
@@ -46,28 +65,59 @@ function goBack() {
     }
 }
 
-/* LOGIN */
-function login() {
-    if (!username.value || !password.value) {
+/* ================= LOGIN (BACKEND) ================= */
+async function login() {
+    let user = document.getElementById("username").value;
+    let pass = document.getElementById("password").value;
+
+    if (!user || !pass) {
         return alert("Enter credentials");
     }
 
-    currentUser = username.value;
+    try {
+        let res = await fetch("http://localhost:5000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: user,
+                password: pass
+            })
+        });
 
-    let initials = currentUser.split(" ").map(w => w[0]).join("").toUpperCase();
+        let data = await res.json();
 
-    let sidebarAvatar = document.getElementById("sidebar-avatar");
-    sidebarAvatar.innerText = initials;
-    document.getElementById("sidebar-username").innerText = currentUser;
+        if (data.error) {
+            return alert(data.error);
+        }
 
-    document.getElementById("sidebar").classList.remove("hidden");
-    document.getElementById("main-content").classList.add("shifted");
+        // SAVE SESSION
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.username);
 
-    historyStack = []; // Reset history stack on login
+        currentUser = data.username;
 
-    showSection("community");
+        let initials = currentUser.split(" ").map(w => w[0]).join("").toUpperCase();
+
+        let sidebarAvatar = document.getElementById("sidebar-avatar");
+        sidebarAvatar.innerText = initials;
+        document.getElementById("sidebar-username").innerText = currentUser;
+
+        document.getElementById("sidebar").classList.remove("hidden");
+        document.getElementById("main-content").classList.add("shifted");
+
+        historyStack = [];
+
+        showSection("community");
+
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
+    }
 }
 
+/* ================= PROFILE ================= */
 function changeProfilePic() {
     let file = document.getElementById("profilePicInput").files[0];
     if (!file) return;
@@ -75,16 +125,15 @@ function changeProfilePic() {
     let url = URL.createObjectURL(file);
     let avatar = document.getElementById("sidebar-avatar");
     avatar.style.backgroundImage = `url(${url})`;
-    avatar.innerText = ""; // Hide initials if image is set
+    avatar.innerText = "";
 }
 
 function maximizeProfilePic() {
     let avatar = document.getElementById("sidebar-avatar");
     let bgImage = avatar.style.backgroundImage;
-    
-    // Don't maximize if they haven't uploaded an image yet
+
     if (!bgImage || bgImage === 'none') return;
-    
+
     let url = bgImage.slice(4, -1).replace(/"/g, "");
     document.getElementById("fullImage").src = url;
     document.getElementById("imageModal").classList.add("active");
@@ -94,7 +143,7 @@ function closeModal() {
     document.getElementById("imageModal").classList.remove("active");
 }
 
-/* COMMUNITY */
+/* ================= COMMUNITY ================= */
 function previewMedia() {
     let file = postMedia.files[0];
     if (!file) return;
@@ -116,7 +165,7 @@ function addPost() {
 <div class="post-header">
 <strong>${currentUser}</strong>
 <div class="dropdown-container">
-<button class="menu-btn" onclick="toggleMenu(${id})">⋮</button>
+<button class="menu-btn" onclick="toggleMenu(${id})">...</button>
 <div id="menu-${id}" class="menu-content">
 <div onclick="savePost(${id})">Save</div>
 <div onclick="editPost(${id})">Edit</div>
@@ -128,10 +177,10 @@ function addPost() {
 ${imgHTML}
 
 <div>
-<button onclick="vote(${id},1)">⬆</button>
+<button onclick="vote(${id},1)">+</button>
 <span id="up-${id}">0</span>
 
-<button onclick="vote(${id},-1)">⬇</button>
+<button onclick="vote(${id},-1)">-</button>
 <span id="down-${id}">0</span>
 </div>
 
@@ -176,22 +225,20 @@ function savePost(id) {
     let post = document.getElementById(`post-${id}`);
     if (post) {
         let clone = post.cloneNode(true);
-        clone.id = `saved-post-${id}`; // avoid ID conflicts
+        clone.id = `saved-post-${id}`;
         let menu = clone.querySelector(".dropdown-container");
-        if (menu) menu.remove(); // Remove dropdown for saved items
+        if (menu) menu.remove();
 
         document.getElementById("savedItems").appendChild(clone);
-        alert("Post saved to your profile!");
+        alert("Post saved!");
     }
     toggleMenu(id);
 }
 
 function editPost(id) {
     let textElem = document.getElementById(`text-${id}`);
-    let newText = prompt("Edit your post:", textElem.innerText);
-    if (newText !== null && newText.trim() !== "") {
-        textElem.innerText = newText;
-    }
+    let newText = prompt("Edit post:", textElem.innerText);
+    if (newText) textElem.innerText = newText;
     toggleMenu(id);
 }
 
@@ -200,7 +247,7 @@ function deletePost(id) {
     if (post) post.remove();
 }
 
-/* COMMENTS */
+/* ================= COMMENTS ================= */
 function addComment(input) {
     if (!input.value) return;
 
@@ -210,7 +257,7 @@ function addComment(input) {
     input.value = "";
 }
 
-/* LOST & FOUND */
+/* ================= LOST & FOUND ================= */
 function previewItem() {
     let file = itemImg.files[0];
     let url = URL.createObjectURL(file);
@@ -220,12 +267,13 @@ function previewItem() {
 
 function addItem() {
     let id = Date.now();
+
     items.innerHTML += `
 <div class="item" id="item-${id}">
 <div class="post-header">
 <strong>${currentUser}</strong>
 <div class="dropdown-container">
-<button class="menu-btn" onclick="toggleMenu(${id})">⋮</button>
+<button class="menu-btn" onclick="toggleMenu(${id})">...</button>
 <div id="menu-${id}" class="menu-content">
 <div onclick="saveItem(${id})">Save</div>
 <div onclick="editItem(${id})">Edit</div>
@@ -254,12 +302,12 @@ function saveItem(id) {
     let item = document.getElementById(`item-${id}`);
     if (item) {
         let clone = item.cloneNode(true);
-        clone.id = `saved-item-${id}`; // avoid ID conflicts
+        clone.id = `saved-item-${id}`;
         let menu = clone.querySelector(".dropdown-container");
-        if (menu) menu.remove(); // Remove dropdown for saved items
+        if (menu) menu.remove();
 
         document.getElementById("savedItems").appendChild(clone);
-        alert("Item saved to your profile!");
+        alert("Item saved!");
     }
     toggleMenu(id);
 }
@@ -268,15 +316,12 @@ function editItem(id) {
     let titleElem = document.getElementById(`item-title-${id}`);
     let descElem = document.getElementById(`item-desc-${id}`);
 
-    let newTitle = prompt("Edit your item title:", titleElem.innerText);
-    if (newTitle !== null && newTitle.trim() !== "") {
-        titleElem.innerText = newTitle;
-    }
+    let newTitle = prompt("Edit title:", titleElem.innerText);
+    if (newTitle) titleElem.innerText = newTitle;
 
-    let newDesc = prompt("Edit your item description:", descElem.innerText);
-    if (newDesc !== null && newDesc.trim() !== "") {
-        descElem.innerText = newDesc;
-    }
+    let newDesc = prompt("Edit description:", descElem.innerText);
+    if (newDesc) descElem.innerText = newDesc;
+
     toggleMenu(id);
 }
 
