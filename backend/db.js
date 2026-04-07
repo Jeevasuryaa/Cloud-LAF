@@ -2,7 +2,6 @@ const sqlite3 = require("sqlite3").verbose();
 
 const db = new sqlite3.Database("./campus.db");
 
-// USERS
 db.run(`
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -11,7 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
 )
 `);
 
-// POSTS
 db.run(`
 CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +20,6 @@ CREATE TABLE IF NOT EXISTS posts (
 )
 `);
 
-// VOTES (🔥 FIXED UNIQUE)
 db.run(`
 CREATE TABLE IF NOT EXISTS votes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +30,6 @@ CREATE TABLE IF NOT EXISTS votes (
 )
 `);
 
-// COMMENTS
 db.run(`
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +39,6 @@ CREATE TABLE IF NOT EXISTS comments (
 )
 `);
 
-// SAVED
 db.run(`
 CREATE TABLE IF NOT EXISTS saved (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

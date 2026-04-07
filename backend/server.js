@@ -15,7 +15,6 @@ app.get("/", (req, res) => {
     res.send("API Running 🚀");
 });
 
-/* ================= LOGIN ================= */
 app.post("/login", (req, res) => {
     const { username, password } = req.body;
 
@@ -42,7 +41,6 @@ app.post("/login", (req, res) => {
     });
 });
 
-/* ================= CREATE POST ================= */
 app.post("/posts", (req, res) => {
     const { content, image, user_id } = req.body;
 
@@ -57,7 +55,6 @@ app.post("/posts", (req, res) => {
     );
 });
 
-/* ================= GET POSTS (WITH VOTES + COMMENTS) ================= */
 app.get("/posts", (req, res) => {
     db.all(`
         SELECT 
@@ -90,7 +87,6 @@ app.get("/posts", (req, res) => {
     });
 });
 
-/* ================= VOTE ================= */
 app.post("/vote", (req, res) => {
     const { user_id, post_id, value } = req.body;
 
@@ -118,7 +114,6 @@ app.post("/vote", (req, res) => {
     );
 });
 
-/* ================= ADD COMMENT ================= */
 app.post("/comments", (req, res) => {
     const { user_id, post_id, content } = req.body;
 
@@ -131,6 +126,26 @@ app.post("/comments", (req, res) => {
             res.json({ success: true });
         }
     );
+});
+
+app.delete("/posts/:id", (req, res) => {
+    const postId = req.params.id;
+
+    // delete votes
+    db.run(`DELETE FROM votes WHERE post_id = ?`, [postId]);
+
+    // delete comments
+    db.run(`DELETE FROM comments WHERE post_id = ?`, [postId]);
+
+    // delete saved posts
+    db.run(`DELETE FROM saved WHERE post_id = ?`, [postId]);
+
+    // delete post itself
+    db.run(`DELETE FROM posts WHERE id = ?`, [postId], function (err) {
+        if (err) return res.status(500).json({ error: "DB error" });
+
+        res.json({ success: true });
+    });
 });
 
 app.listen(5000, () => console.log("Server running on port 5000"));

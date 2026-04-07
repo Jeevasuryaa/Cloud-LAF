@@ -2,7 +2,6 @@ let votes = {};
 let currentUser = "";
 let historyStack = [];
 
-/* ================= AUTO LOGIN ================= */
 window.onload = () => {
     let token = localStorage.getItem("token");
     let username = localStorage.getItem("username");
@@ -25,7 +24,6 @@ window.onload = () => {
     }
 };
 
-/* ================= PAGE SWITCH ================= */
 function showSection(id, isBack = false) {
     let currentActive = document.querySelector(".page.active");
 
@@ -51,7 +49,6 @@ function showSection(id, isBack = false) {
     }
 }
 
-/* ================= LOGIN ================= */
 async function login() {
     let user = document.getElementById("username").value;
     let pass = document.getElementById("password").value;
@@ -59,7 +56,7 @@ async function login() {
     if (!user || !pass) return alert("Enter credentials");
 
     try {
-        let res = await fetch("http://13.53.207.106:5000/login", {
+        let res = await fetch("http://13.49.78.182:5000/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username: user, password: pass })
@@ -94,7 +91,7 @@ async function login() {
     }
 }
 
-/* ================= COMMUNITY ================= */
+
 function previewMedia() {
     let file = postMedia.files[0];
     if (!file) return;
@@ -103,7 +100,7 @@ function previewMedia() {
     preview.innerHTML = `<img src="${url}" width="200">`;
 }
 
-/* 🔥 MODIFIED addPost (DB + UI intact) */
+
 async function addPost() {
     let text = postText.value;
     let imgHTML = preview.innerHTML;
@@ -112,7 +109,7 @@ async function addPost() {
     let userId = localStorage.getItem("userId");
 
     // ✅ Save to DB
-    await fetch("http://13.53.207.106:5000/posts", {
+    await fetch("http://13.49.78.182:5000/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -122,7 +119,6 @@ async function addPost() {
         })
     });
 
-    // ✅ Reload from DB
     loadPosts();
 
     postText.value = "";
@@ -130,9 +126,8 @@ async function addPost() {
     postMedia.value = "";
 }
 
-/* 🔥 NEW: load posts but KEEP your UI */
 async function loadPosts() {
-    let res = await fetch("http://13.53.207.106:5000/posts");
+    let res = await fetch("http://13.49.78.182:5000/posts");
     let data = await res.json();
 
     posts.innerHTML = "";
@@ -142,7 +137,6 @@ async function loadPosts() {
 
         votes[id] = 0;
 
-        // 🔥 build comments HTML
         let commentsHTML = "";
         if (post.comments && post.comments.length > 0) {
             post.comments.forEach(c => {
@@ -188,13 +182,12 @@ onkeydown="if(event.key==='Enter') addComment(this, ${id})">
 `;
     });
 }
-/* ================= REMAINING CODE (UNCHANGED) ================= */
+
 
 async function vote(id, val) {
     let userId = localStorage.getItem("userId");
 
-    // send vote to backend
-    await fetch("http://13.53.207.106:5000/vote", {
+    await fetch("http://13.49.78.182:5000/vote", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -206,7 +199,6 @@ async function vote(id, val) {
         })
     });
 
-    // reload posts (sync UI with DB)
     loadPosts();
 }
 
@@ -236,9 +228,12 @@ function editPost(id) {
     toggleMenu(id);
 }
 
-function deletePost(id) {
-    let post = document.getElementById(`post-${id}`);
-    if (post) post.remove();
+async function deletePost(id) {
+    await fetch(`http://13.49.78.182:5000/posts/${id}`, {
+        method: "DELETE"
+    });
+
+    loadPosts(); // refresh UI
 }
 
 async function addComment(input, postId) {
@@ -246,7 +241,7 @@ async function addComment(input, postId) {
 
     let userId = localStorage.getItem("userId");
 
-    await fetch("http://13.53.207.106:5000/comments", {
+    await fetch("http://13.49.78.182:5000/comments", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -259,5 +254,5 @@ async function addComment(input, postId) {
     });
 
     input.value = "";
-    loadPosts(); // refresh comments
+    loadPosts(); 
 }

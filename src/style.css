@@ -5,7 +5,7 @@ body {
     margin: 0;
 }
 
-/* HEADER */
+
 header {
     background: #2a2b2f;
     padding: 15px 30px;
@@ -21,7 +21,7 @@ header {
     font-weight: bold;
 }
 
-/* PAGES */
+
 .page {
     display: none;
     max-width: 900px;
@@ -29,7 +29,7 @@ header {
     padding: 20px;
 }
 
-/* ACTIVE PAGE ONLY */
+
 .page.active {
     display: block;
 }
@@ -38,26 +38,26 @@ header {
     display: flex;
 }
 
-/* LOGIN CENTER ONLY */
+
 .center {
     justify-content: center;
     align-items: center;
     height: 80vh;
 }
 
-/* CARD */
+
 .card {
     background: #2a2b2f;
     padding: 15px;
     border-radius: 10px;
 }
 
-/* LOGIN CARD FIX */
+
 .login-card {
     width: 400px;
 }
 
-/* INPUT */
+
 input,
 textarea {
     background: #333338;
@@ -68,7 +68,6 @@ textarea {
     margin: 5px;
 }
 
-/* BUTTON */
 button {
     background-color: #3B82F6;
     color: #fff;
@@ -78,7 +77,7 @@ button {
     cursor: pointer;
 }
 
-/* AVATAR */
+
 .avatar {
     width: 36px;
     height: 36px;
@@ -89,7 +88,7 @@ button {
     justify-content: center;
 }
 
-/* POSTS */
+
 .post,
 .item {
     background: #2a2b2f;
@@ -98,7 +97,7 @@ button {
     margin-top: 15px;
 }
 
-/* POST HEADER */
+
 .post-header {
     display: flex;
     justify-content: space-between;
@@ -106,7 +105,6 @@ button {
     margin-bottom: 10px;
 }
 
-/* COMMENTS */
 .comment {
     background: #333;
     padding: 5px;
@@ -120,7 +118,6 @@ button {
     padding-top: 10px;
 }
 
-/* MENU */
 .dropdown-container {
     position: relative;
 }
@@ -164,12 +161,11 @@ button {
     background: #444;
 }
 
-/* HIDDEN */
+
 .hidden {
     display: none;
 }
 
-/* SIDEBAR */
 .sidebar {
     position: fixed;
     left: 0;
@@ -250,7 +246,7 @@ button {
     background: #444;
 }
 
-/* MAIN CONTENT WRAPPER */
+
 #main-content {
     transition: margin-left 0.3s;
 }
@@ -266,7 +262,6 @@ button {
     font-size: 0.9rem;
 }
 
-/* IMAGE MODAL */
 .image-modal {
     position: fixed;
     z-index: 1000;
