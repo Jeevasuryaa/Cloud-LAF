@@ -56,7 +56,7 @@ async function login() {
     if (!user || !pass) return alert("Enter credentials");
 
     try {
-        let res = await fetch("http://ec2-51-21-219-71.eu-north-1.compute.amazonaws.com:5000/login", {
+        let res = await fetch("http://ec2-13-53-126-18.eu-north-1.compute.amazonaws.com:5000/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username: user, password: pass })
@@ -109,7 +109,7 @@ async function addPost() {
     let userId = localStorage.getItem("userId");
 
     // ✅ Save to DB
-    await fetch("http://ec2-51-21-219-71.eu-north-1.compute.amazonaws.com:5000/posts", {
+    await fetch("http://ec2-13-53-126-18.eu-north-1.compute.amazonaws.com:5000/posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -127,7 +127,7 @@ async function addPost() {
 }
 
 async function loadPosts() {
-    let res = await fetch("http://ec2-51-21-219-71.eu-north-1.compute.amazonaws.com:5000/posts");
+    let res = await fetch("http://ec2-13-53-126-18.eu-north-1.compute.amazonaws.com:5000/posts");
     let data = await res.json();
 
     posts.innerHTML = "";
@@ -187,7 +187,7 @@ onkeydown="if(event.key==='Enter') addComment(this, ${id})">
 async function vote(id, val) {
     let userId = localStorage.getItem("userId");
 
-    await fetch("http://ec2-51-21-219-71.eu-north-1.compute.amazonaws.com:5000/vote", {
+    await fetch("http://ec2-13-53-126-18.eu-north-1.compute.amazonaws.com:5000/vote", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -229,7 +229,7 @@ function editPost(id) {
 }
 
 async function deletePost(id) {
-    await fetch(`http://ec2-51-21-219-71.eu-north-1.compute.amazonaws.com:5000/posts/${id}`, {
+    await fetch(`http://ec2-13-53-126-18.eu-north-1.compute.amazonaws.com:5000/posts/${id}`, {
         method: "DELETE"
     });
 
@@ -241,7 +241,7 @@ async function addComment(input, postId) {
 
     let userId = localStorage.getItem("userId");
 
-    await fetch("http://ec2-51-21-219-71.eu-north-1.compute.amazonaws.com:5000/comments", {
+    await fetch("http://ec2-13-53-126-18.eu-north-1.compute.amazonaws.com:5000/comments", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -254,5 +254,5 @@ async function addComment(input, postId) {
     });
 
     input.value = "";
-    loadPosts(); 
+    loadPosts();
 }
